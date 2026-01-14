@@ -1,0 +1,23 @@
+{
+  "name": "vn-format",
+  "version": "0.1.0",
+  "description": "Thư viện tiện ích All-in-one cho lập trình viên Việt Nam",
+  "main": "./dist/index.js",           
+  "module": "./dist/index.mjs",        
+  "types": "./dist/index.d.ts",        
+  "files": [                           
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["vietnam", "format", "vnd", "utils"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
