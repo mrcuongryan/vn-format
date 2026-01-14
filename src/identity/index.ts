@@ -1,3 +1,6 @@
+// src/identity/index.ts
+import { CCCD_PROVINCE_CODES } from './data';
+import { convertToNewProvince } from '../location'; // <--- Import hàm chuyển đổi
 // --- PHẦN 1: VALIDATION (KIỂM TRA) ---
 
 /**
@@ -13,6 +16,88 @@ export const isValidPhone = (phone: string): boolean => {
  * Kiểm tra CCCD (12 số)
  */
 export const isValidCCCD = (id: string): boolean => /^\d{12}$/.test(id);
+
+// --- PHẦN MỚI: TRÍCH XUẤT CCCD ---
+
+export interface CCCDInfo {
+  isValid: boolean;
+  code: string;
+  province?: string; // Nơi khai sinh
+  newProvince?: string | null; // Tên tỉnh sau sáp nhập (2025)
+  gender?: "Nam" | "Nữ";
+  birthYear?: number;
+  fullDate?: string; // Sẽ null vì CCCD không chứa ngày tháng, chỉ có năm
+}
+
+export interface ExtractOptions {
+  format?: 'json' | 'string'; // Định dạng trả về
+}
+
+/**
+ * Trích xuất thông tin chi tiết từ CCCD
+ * @param cccd Số CCCD (12 số)
+ * @param options Cấu hình trả về
+ */
+export const extractCCCD = (
+  cccd: string | number, 
+  options: ExtractOptions = { format: 'json' }
+): CCCDInfo | string | null => {
+  
+  const str = cccd.toString();
+  
+  // 1. Validate cơ bản
+  if (!/^\d{12}$/.test(str)) {
+    return null;
+  }
+
+  // 2. Cắt chuỗi
+  const provinceCode = str.substring(0, 3);
+  const genderCode = str.substring(3, 4);
+  const yearCode = str.substring(4, 6);
+  // const randomPart = str.substring(6);
+
+  // 3. Xử lý Tỉnh thành
+  const currentProvince = CCCD_PROVINCE_CODES[provinceCode] || "Không xác định";
+
+  // --- LOGIC MỚI: Lấy tên tỉnh sau sáp nhập ---
+  // Nếu không xác định được tỉnh thì newProvince là null
+  const newProvince = currentProvince !== "Không xác định" 
+    ? convertToNewProvince(currentProvince) 
+    : null;
+  // -------------------------------------------
+
+  // 4. Xử lý Giới tính & Thế kỷ
+  const gCode = parseInt(genderCode);
+  let gender: "Nam" | "Nữ" = "Nam";
+  let century = 1900;
+
+  // Logic theo quy định Bộ Công An
+  if ([1, 3, 5, 7, 9].includes(gCode)) gender = "Nữ";
+  
+  if (gCode === 0 || gCode === 1) century = 1900;
+  if (gCode === 2 || gCode === 3) century = 2000;
+  if (gCode === 4 || gCode === 5) century = 2100;
+  if (gCode === 6 || gCode === 7) century = 2200;
+  if (gCode === 8 || gCode === 9) century = 2300;
+
+  const fullYear = century + parseInt(yearCode);
+
+  // 5. Trả về kết quả
+  const result: CCCDInfo = {
+    isValid: true,
+    code: str,
+    province: currentProvince,
+    newProvince,
+    gender,
+    birthYear: fullYear
+  };
+
+  if (options.format === 'string') {
+    return `CCCD: ${str} | Nơi sinh: ${currentProvince} | Tỉnh mới: ${newProvince} | Giới tính: ${gender} | Năm sinh: ${fullYear}`;
+  }
+
+  return result;
+};
 
 /**
  * Kiểm tra Mã Số Thuế (10 hoặc 13 số)
