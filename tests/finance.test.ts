@@ -43,6 +43,10 @@ describe('Module Finance', () => {
       // 10.50 USD -> Mười phẩy năm đô la mỹ
       expect(readMoney("10.50", { unit: 'USD', decimalSeparator: '.' }))
         .toBe('Mười phẩy năm đô la mỹ');
+
+      // 100.500  -> Một trăm phẩy năm
+      expect(readMoney("100.50"))
+        .toBe('Một trăm phẩy năm');
     });
 
     test('Đọc số thập phân (kiểu dấu phẩy VN)', () => {
