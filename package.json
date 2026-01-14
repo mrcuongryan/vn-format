@@ -1,6 +1,6 @@
 {
   "name": "vn-format",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Thư viện tiện ích All-in-one cho lập trình viên Việt Nam",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
