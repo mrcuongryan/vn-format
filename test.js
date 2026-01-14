@@ -1,10 +1,15 @@
-// test.js
-const { formatVND, removeTone, slugify, normalizeName } = require('./dist/index.js');
+const { readMoney } = require('./dist/index.js');
 
-console.log("--- FINANCE ---");
-console.log("Tiền:", formatVND(500000));
+// const { readMoney } = require('vn-format');
 
-console.log("\n--- STRING ---");
-console.log("Bỏ dấu:", removeTone("Thử nghiệm tiếng Việt"));
-console.log("Slug:", slugify("Hướng dẫn ReactJS cơ bản 2024!"));
-console.log("Tên:", normalizeName("  nguyễn    MẠNH cường  "));
+// ❌ SAI: Truyền Number (JS tự làm tròn mất đuôi .123)
+console.log(readMoney(20695101234560980000.123)); 
+// Output: "Hai mươi tỷ tỷ... chín trăm tám mươi nghìn" (Mất phần phẩy)
+
+// ✅ ĐÚNG: Truyền String (Giữ nguyên độ chính xác)
+console.log(readMoney("-20695101234560980000.123")); 
+// Output: "Hai mươi tỷ tỷ... chín trăm tám mươi nghìn phẩy một hai ba"
+
+// Test đọc gộp phần thập phân
+console.log(readMoney("20.15", { decimalStyle: 'group' }));
+// Output: "Hai mươi phẩy mười lăm"

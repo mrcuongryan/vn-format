@@ -1,16 +1,14 @@
+interface ReadMoneyConfig {
+    unit?: string;
+    decimalSeparator?: '.' | ',';
+    decimalStyle?: 'digit' | 'group';
+}
 /**
- * Định dạng số thành tiền tệ VNĐ
- * @param amount Số tiền cần định dạng (VD: 100000)
- * @param suffix Đơn vị tiền tệ (Mặc định: 'đ')
- * @returns Chuỗi đã định dạng (VD: "100.000đ")
+ * MAIN: Đọc tiền/số thành chữ
  */
+declare const readMoney: (number: string | number | bigint, config?: ReadMoneyConfig) => string;
 declare const formatVND: (amount: number | string, suffix?: string) => string;
-/**
- * Rút gọn số lượng lớn (Dùng cho biểu đồ, view count)
- * @param num Số cần rút gọn (VD: 1500000)
- * @returns Chuỗi rút gọn (VD: "1.5tr")
- */
-declare const shortenNumber: (num: number, toFixed?: number) => string;
+declare const shortenNumber: (num: number) => string;
 
 /**
  * Loại bỏ dấu tiếng Việt (Dùng cho tính năng tìm kiếm)
@@ -31,4 +29,54 @@ declare const slugify: (str: string) => string;
  */
 declare const normalizeName: (str: string) => string;
 
-export { formatVND, normalizeName, removeTone, shortenNumber, slugify };
+/**
+ * Kiểm tra số điện thoại Việt Nam hợp lệ
+ */
+declare const isValidPhone: (phone: string) => boolean;
+/**
+ * Kiểm tra CCCD (12 số)
+ */
+declare const isValidCCCD: (id: string) => boolean;
+/**
+ * Kiểm tra Mã Số Thuế (10 hoặc 13 số)
+ */
+declare const isValidMST: (mst: string) => boolean;
+/**
+ * Xác định nhà mạng từ số điện thoại
+ * @param phone Số điện thoại
+ * @returns Tên nhà mạng (Viettel, Vinaphone, Mobifone, Vietnamobile, Gmobile, hoặc 'Unknown')
+ */
+declare const getPhoneNetwork: (phone: string) => string;
+/**
+ * Trích xuất thông tin từ số CCCD
+ * @param cccd Số CCCD 12 số
+ * @returns Object chứa giới tính và năm sinh (VD: { gender: 'Nam', birthYear: 1996 })
+ */
+declare const parseCCCD: (cccd: string) => {
+    gender: string;
+    birthYear: number;
+} | null;
+/**
+ * Ẩn bớt số thẻ/tài khoản, chỉ hiện 4 số cuối
+ * @param number Chuỗi số (VD: 123456789)
+ * @param maskChar Ký tự thay thế (mặc định *)
+ * @returns VD: *****6789
+ */
+declare const maskCard: (number: string, maskChar?: string) => string;
+
+/**
+ * Lấy danh sách toàn bộ 63 tỉnh thành
+ */
+declare const getProvinces: () => string[];
+/**
+ * Tìm và chuẩn hóa tên tỉnh thành
+ * @param input VD: "tp hcm", "sài gòn", "đà lạt", "hà tây"
+ * @returns Tên chuẩn "Thành phố Hồ Chí Minh" hoặc null
+ */
+declare const normalizeProvince: (input: string) => string | null;
+/**
+ * Kiểm tra tỉnh thành hợp lệ
+ */
+declare const isValidProvince: (provinceName: string) => boolean;
+
+export { type ReadMoneyConfig, formatVND, getPhoneNetwork, getProvinces, isValidCCCD, isValidMST, isValidPhone, isValidProvince, maskCard, normalizeName, normalizeProvince, parseCCCD, readMoney, removeTone, shortenNumber, slugify };
