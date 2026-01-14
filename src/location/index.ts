@@ -1,5 +1,51 @@
 import { removeTone } from '../string';
 
+// Bản đồ sáp nhập 63 -> 34 tỉnh thành (Hiệu lực 12/6/2025)
+const MERGE_MAPPING_2025: Record<string, string> = {
+  // --- Giữ nguyên (11 tỉnh/thành) ---
+  "Hà Nội": "Hà Nội",
+  "Thừa Thiên Huế": "Thành phố Huế", // Lưu ý: Lên thành phố trực thuộc TW
+  "Quảng Ninh": "Quảng Ninh",
+  "Cao Bằng": "Cao Bằng",
+  "Lạng Sơn": "Lạng Sơn",
+  "Lai Châu": "Lai Châu",
+  "Điện Biên": "Điện Biên",
+  "Sơn La": "Sơn La",
+  "Thanh Hóa": "Thanh Hóa",
+  "Nghệ An": "Nghệ An",
+  "Hà Tĩnh": "Hà Tĩnh",
+
+  // --- Sáp nhập (23 tỉnh/thành mới) ---
+  // 1. Tây Bắc & Đông Bắc
+  "Hà Giang": "Tuyên Quang", "Tuyên Quang": "Tuyên Quang",
+  "Lào Cai": "Lào Cai", "Yên Bái": "Lào Cai",
+  "Thái Nguyên": "Thái Nguyên", "Bắc Kạn": "Thái Nguyên",
+  "Phú Thọ": "Phú Thọ", "Vĩnh Phúc": "Phú Thọ", "Hòa Bình": "Phú Thọ",
+  "Bắc Ninh": "Bắc Ninh", "Bắc Giang": "Bắc Ninh",
+  "Hưng Yên": "Hưng Yên", "Thái Bình": "Hưng Yên",
+  "Hải Phòng": "Thành phố Hải Phòng", "Hải Dương": "Thành phố Hải Phòng",
+  "Ninh Bình": "Ninh Bình", "Hà Nam": "Ninh Bình", "Nam Định": "Ninh Bình",
+
+  // 2. Miền Trung & Tây Nguyên
+  "Quảng Trị": "Quảng Trị", "Quảng Bình": "Quảng Trị",
+  "Đà Nẵng": "Thành phố Đà Nẵng", "Quảng Nam": "Thành phố Đà Nẵng",
+  "Quảng Ngãi": "Quảng Ngãi", "Kon Tum": "Quảng Ngãi",
+  "Gia Lai": "Gia Lai", "Bình Định": "Gia Lai",
+  "Đắk Lắk": "Đắk Lắk", "Phú Yên": "Đắk Lắk",
+  "Khánh Hòa": "Khánh Hòa", "Ninh Thuận": "Khánh Hòa",
+  "Lâm Đồng": "Lâm Đồng", "Đắk Nông": "Lâm Đồng", "Bình Thuận": "Lâm Đồng",
+
+  // 3. Miền Nam
+  "Đồng Nai": "Đồng Nai", "Bình Phước": "Đồng Nai",
+  "Thành phố Hồ Chí Minh": "Thành phố Hồ Chí Minh", "Bà Rịa - Vũng Tàu": "Thành phố Hồ Chí Minh", "Bình Dương": "Thành phố Hồ Chí Minh",
+  "Tây Ninh": "Tây Ninh", "Long An": "Tây Ninh",
+  "Đồng Tháp": "Đồng Tháp", "Tiền Giang": "Đồng Tháp",
+  "Vĩnh Long": "Vĩnh Long", "Bến Tre": "Vĩnh Long", "Trà Vinh": "Vĩnh Long",
+  "Cần Thơ": "Thành phố Cần Thơ", "Sóc Trăng": "Thành phố Cần Thơ", "Hậu Giang": "Thành phố Cần Thơ",
+  "Cà Mau": "Cà Mau", "Bạc Liêu": "Cà Mau",
+  "An Giang": "An Giang", "Kiên Giang": "An Giang"
+};
+
 // Danh sách 63 Tỉnh/Thành phố chuẩn (Cập nhật 2024-2025)
 const PROVINCES = [
   "An Giang", "Bà Rịa - Vũng Tàu", "Bắc Giang", "Bắc Kạn", "Bạc Liêu", "Bắc Ninh",
@@ -134,4 +180,17 @@ export const normalizeProvince = (input: string): string | null => {
  */
 export const isValidProvince = (provinceName: string): boolean => {
   return normalizeProvince(provinceName) !== null;
+};
+
+/**
+ * Chuyển đổi tên tỉnh thành cũ (63 tỉnh) sang mới (34 tỉnh)
+ * Dựa trên Nghị quyết sáp nhập 12/6/2025
+ */
+export const convertToNewProvince = (currentProvince: string): string | null => {
+  // 1. Chuẩn hóa tên đầu vào trước (để xử lý case như "tphcm", "daklak"...)
+  const normalized = normalizeProvince(currentProvince);
+  if (!normalized) return null;
+
+  // 2. Map sang tên mới
+  return MERGE_MAPPING_2025[normalized] || normalized; // Fallback về tên cũ nếu không tìm thấy mapping
 };
