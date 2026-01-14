@@ -20,58 +20,77 @@ npm install vn-format
 # hoặc
 yarn add vn-format
 ```
+## Tính năng nổi bật
+💰 Tài chính: Đọc số thành chữ (hỗ trợ số siêu lớn tỷ tỷ), định dạng tiền tệ, xử lý dấu phẩy/chấm linh hoạt.
 
-## Tính năng (v0.1.0)
-Phiên bản Core tập trung vào hai module chính: Tài chính (Finance) và Chuỗi (String).
+🌏 Hành chính: Chuẩn hóa tên Tỉnh/Thành (HCM -> Thành phố Hồ Chí Minh), map thành phố du lịch về tỉnh.
 
-### 1. Finance (Tiền tệ & Số học)
-Xử lý hiển thị tiền tệ và chuyển đổi số.
+🆔 Định danh: Kiểm tra/Validate số điện thoại, CCCD, Mã số thuế. Tự động nhận diện nhà mạng.
+
+📅 Thời gian: Format ngày tháng, tính thời gian "vừa xong", tính năm Can Chi (Giáp Thìn).
+
+🔤 Chuỗi: Bỏ dấu tiếng Việt, tạo Slug, chuẩn hóa tên người.
+
+## Hướng dẫn sử dụng
+### 1. Tài chính (Finance)
+```JavaScript
+import { readMoney, formatVND } from 'vn-format';
+
+// Đọc số thành chữ (Hỗ trợ cấu hình đơn vị, dấu phân cách)
+readMoney("10500000"); 
+// -> "Mười triệu năm trăm nghìn đồng"
+
+readMoney("100.50", { unit: 'USD', decimalStyle: 'group' });
+// -> "Một trăm phẩy năm mươi đô la mỹ"
+
+// Định dạng hiển thị
+formatVND(500000); // -> "500.000đ"
+```
+### 2. Địa lý (Location)
+Tự động sửa lỗi chính tả và chuẩn hóa tên tỉnh thành.
 
 ```JavaScript
+import { normalizeProvince } from 'vn-format';
 
-import { formatVND, readMoney, shortenNumber } from 'vn-format';
-
-// 1. Định dạng tiền tệ
-formatVND(1250000); 
-// Output: "1.250.000 đ"
-
-// 2. Đọc số thành chữ (Hỗ trợ cấu hình giọng Bắc/Nam)
-readMoney(10500500); 
-// Output: "Mười triệu năm trăm nghìn năm trăm đồng"
-
-// 3. Rút gọn số lớn (Cho biểu đồ, dashboard)
-shortenNumber(1500000000); 
-// Output: "1.5 tỷ"
-shortenNumber(12500); 
-// Output: "12.5k"
+normalizeProvince("tphcm"); // -> "Thành phố Hồ Chí Minh"
+normalizeProvince("hà tây"); // -> "Hà Nội" (Tự map lịch sử)
+normalizeProvince("Đà Lạt"); // -> "Lâm Đồng" (Map địa danh về tỉnh)
 ```
-### 2. String (Xử lý Tiếng Việt)
-Các tiện ích xử lý chuỗi tiếng Việt thường gặp.
-
+### 3. Thời gian (Date)
 ```JavaScript
+import { formatDate, timeAgo, getCanChi } from 'vn-format';
 
-import { removeTone, slugify, normalizeName } from 'vn-format';
+const now = new Date();
 
-// 1. Bỏ dấu tiếng Việt (Dùng cho tìm kiếm)
-removeTone("Nguyễn Mạnh Cường"); 
-// Output: "Nguyen Manh Cuong"
-
-// 2. Tạo URL Slug chuẩn SEO
-slugify("Khai trương nhà máy DEGO ORGANIC"); 
-// Output: "khai-truong-nha-may-dego-organic"
-
-// 3. Chuẩn hóa tên người (Viết hoa chữ cái đầu)
-normalizeName("nguyễn   mạnh cường"); 
-// Output: "Nguyễn Mạnh Cường"
+formatDate(now, "HH:mm dd/MM/yyyy"); // -> "15:30 14/01/2026"
+timeAgo(new Date("2026-01-01")); // -> "2 tuần trước"
+getCanChi(2026); // -> "Bính Ngọ"
 ```
+
+### 4. Định danh (Identity)
+```JavaScript
+import { getPhoneNetwork, isValidCCCD } from 'vn-format';
+
+getPhoneNetwork("0981234567"); // -> "Viettel"
+isValidCCCD("001096000000"); // -> true
+```
+### 5. Chuỗi (String)
+```JavaScript
+import { removeTone, slugify } from 'vn-format';
+
+removeTone("Nguyễn Mạnh Cường"); // -> "Nguyen Manh Cuong"
+slugify("Khai trương nhà máy DEGO"); // -> "khai-truong-nha-may-dego"
+```
+
+---
 ## Lộ trình phát triển (Roadmap)
 - [x] v0.1.0: Core (Finance & String Utils).
 - [ ] v0.2.0: Identity (Validate CCCD, Mã số thuế, Số điện thoại).
 - [ ] v0.3.0: DateTime (Âm lịch, Ngày lễ Việt Nam).
 - [ ] v1.0.0: Stable Release & Full Unit Test.
 
-Đóng góp
+## Đóng góp
 Mọi đóng góp (Pull Requests) đều được hoan nghênh. Vui lòng đọc file CONTRIBUTING.md trước khi bắt đầu.
 
-License
+## License
 MIT © [Nguyen Manh Cuong]

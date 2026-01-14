@@ -1,13 +1,16 @@
 /**
- * Danh sách thứ trong tuần (Tiếng Việt)
+ * Danh sách thứ trong tuần
  */
 const DAYS = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
 
+// Dữ liệu Can - Chi
+const CAN = ['Canh', 'Tân', 'Nhâm', 'Quý', 'Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ'];
+const CHI = ['Thân', 'Dậu', 'Tuất', 'Hợi', 'Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi'];
+
 /**
  * Định dạng ngày tháng theo chuẩn Việt Nam
- * @param date Đối tượng Date hoặc chuỗi thời gian, timestamp
- * @param format Chuỗi định dạng (Mặc định: 'dd/MM/yyyy')
- * Support: dd, MM, yyyy, HH, mm, ss
+ * @param date Date | string | number
+ * @param format Mặc định 'dd/MM/yyyy'
  */
 export const formatDate = (date: Date | string | number, format = 'dd/MM/yyyy'): string => {
   const d = new Date(date);
@@ -29,8 +32,6 @@ export const formatDate = (date: Date | string | number, format = 'dd/MM/yyyy'):
 
 /**
  * Lấy tên thứ trong tuần
- * @param date Ngày
- * @returns VD: "Thứ Hai", "Chủ Nhật"
  */
 export const getDayName = (date: Date | string | number): string => {
   const d = new Date(date);
@@ -46,13 +47,10 @@ export const getDayName = (date: Date | string | number): string => {
 export const timeAgo = (date: Date | string | number): string => {
   const d = new Date(date);
   if (isNaN(d.getTime())) return "";
-
   const now = new Date();
   const seconds = Math.floor((now.getTime() - d.getTime()) / 1000);
 
-  // Xử lý tương lai (nếu ngày truyền vào lớn hơn hiện tại)
   if (seconds < 0) return formatDate(date, 'HH:mm dd/MM/yyyy');
-
   if (seconds < 60) return "Vừa xong";
   
   const minutes = Math.floor(seconds / 60);
@@ -65,10 +63,27 @@ export const timeAgo = (date: Date | string | number): string => {
   if (days < 7) return `${days} ngày trước`;
 
   if (days < 30) return `${Math.floor(days / 7)} tuần trước`;
-
   if (days < 365) return `${Math.floor(days / 30)} tháng trước`;
 
   return `${Math.floor(days / 365)} năm trước`;
+};
+
+/**
+ * Tính Can Chi của năm (Dương lịch -> Âm lịch text)
+ * @param year Năm dương lịch (VD: 2026)
+ * @returns Chuỗi Can Chi (VD: "Bính Ngọ")
+ */
+export const getCanChi = (year: number | string | Date): string => {
+  let y = 0;
+  if (typeof year === 'object') y = year.getFullYear();
+  else y = Number(year);
+
+  if (isNaN(y) || y <= 0) return "";
+
+  const can = CAN[y % 10];
+  const chi = CHI[y % 12];
+
+  return `${can} ${chi}`;
 };
 
 /**
