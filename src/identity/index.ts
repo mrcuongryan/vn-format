@@ -5,7 +5,7 @@
  */
 export const isValidPhone = (phone: string): boolean => {
   const cleanPhone = phone.replace(/[^\d+]/g, '');
-  const regex = /^(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+  const regex = /^((0084|\+84|84|0)+[3|5|7|8|9])+([0-9]{8})\b/;
   return regex.test(cleanPhone);
 };
 
