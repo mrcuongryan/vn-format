@@ -38,7 +38,7 @@ import { readMoney, formatVND } from 'vn-format';
 
 // Đọc số thành chữ (Hỗ trợ cấu hình đơn vị, dấu phân cách)
 readMoney("10500000"); 
-// -> "Mười triệu năm trăm nghìn đồng"
+// -> "Mười triệu năm trăm nghìn"
 
 readMoney("100.50", { unit: 'USD', decimalStyle: 'group' });
 // -> "Một trăm phẩy năm mươi đô la mỹ"

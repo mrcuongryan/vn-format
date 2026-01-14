@@ -160,6 +160,12 @@ export const readMoney = (number: string | number | bigint, config: ReadMoneyCon
     decimalPart = parts.length > 1 ? parts[1] : "";
   }
 
+  // --- FIX START: Loại bỏ số 0 ở cuối phần thập phân ---
+  if (decimalPart) {
+    decimalPart = decimalPart.replace(/0+$/, "");
+  }
+  // --- FIX END ---
+
   integerPart = integerPart.replace(/^0+/, '') || '0';
 
   // 3. Thực hiện đọc
